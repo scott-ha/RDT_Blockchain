@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>welcome to k-roller</title>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/static/public/css/RDT_style.css?ver=0" />
+</head>
+<body>
+    {% if session['logged_in'] %}
+    <div class="bg"></div>
+    {% else %}
+    <div class="bg-dark"></div>
+    <div class="div-layer">
+        <div class="div-form">
+            <div class="login-title">Register</div>
+            <form class="form-login" action="/reg" method="POST">
+                <input type="text" name="username" class="form-id" placeholder="ID" /><br /><br />
+                <input type="password" name="password" class="form-pw" placeholder="PW" /><br /><br />
+                <button type="submit" class="btn-login">Register</button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+</body>
+</html>

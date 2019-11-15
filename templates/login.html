@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>welcome to k-roller</title>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/public/css/RDT_style.css" />
+</head>
+<body>
+    <div class="bg">
+    {% if session['logged_in'] %}
+        {% include "./nav.html" %}
+        <br />
+        {% include "./menu.html" %}
+    {% else %}
+        <div class="bg-dark"></div>
+        <div class="div-layer">
+            <div class="div-form">
+                <div class="login-title">RDT Coin Platform</div>
+                <form class="form-login" action="/login" method="POST">
+                    <input type="text" name="username" class="form-id" placeholder="ID" /><br />
+                    <input type="password" name="password" class="form-pw" placeholder="PW" /><br />
+                    <button type="submit" class="btn-login">Login</button>
+                </form>
+                <div class="regis">
+                    <span onclick="location.href='/reg'">Register Now!</span>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    </div>
+</body>
+</html>
