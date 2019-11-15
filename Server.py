@@ -6,7 +6,10 @@ import json
 from time import time
 from urllib.parse import urlparse
 from uuid import uuid4
-
+# 191024 test : module error
+# solution
+# reinstall crypto & pycrypto
+# install pycryptodome==3.4.3
 import binascii
 import Crypto
 import Crypto.Random
@@ -44,7 +47,10 @@ def home():
     if not session.get('logged_in'):
         return render_template('./index.html')
     return render_template('./index.html', user = user_name)
-
+#
+# HN
+# not use
+#
 @m_app.route('/rest')
 def home_rest():
     response = {
@@ -70,13 +76,17 @@ def login():
             response.set_cookie('MY_USER', name)
             return response
     return render_template('./login.html', data = 'you are not allowed to login')
-
+#
+# HN
+# rest 수정
+#
 @m_app.route('/login/rest', methods = ['POST'])
 def login_rest():
     name = request.form['username']
     password = request.form['password']
     if User.isValidUser(name, password) == True:
-        session['logged_in'] = True
+        # do in node server
+        # session['logged_in'] = True
         response = {
             'rcode': 'ok',
         }
@@ -97,6 +107,11 @@ def logout():
     response.delete_cookie('MY_USER')
     return response
 
+#
+# HN
+# not need rest
+# do in node server
+#
 @m_app.route('/logout/rest')
 def logout_rest():
     session['logged_in'] = False
@@ -129,10 +144,13 @@ def register_rest():
             'rcode': 'ok',
         }
         return jsonify(response), 200
-    response = {
-        'rcode': 'nok',
-        'rmessage': 'you are already registered'
-    }
+    # HN
+    # add else
+    else :
+        response = {
+            'rcode': 'nok',
+            'rmessage': 'you are already registered'
+            }
     return jsonify(response), 200
 
 #
@@ -153,7 +171,9 @@ def unregister():
         else:
             return render_template('./unregister.html', user = user_name, data = 'user and password are mismatched, try again')
     return render_template('./unregister.html', user = user_name)
-
+#
+# HN
+#
 @m_app.route('/unreg/rest', methods = ['POST'])
 def unregister_rest():
     name = request.form['username']
@@ -485,8 +505,8 @@ def mine_rest():
 def createNewTransaction():
     values = request.form
     required = [
-        'sender', 
-        'recipient', 
+        'sender',
+        'recipient',
         'amount',
         'signature',
     ]
@@ -505,23 +525,25 @@ def createNewTransaction():
 
     User.addCoins(values['recipient'], int(values['amount']))
     index = m_blockchain.createNewTransaction( #---- create now transaction
-        values['sender'], 
-        values['recipient'], 
-        values['amount'], 
+        values['sender'],
+        values['recipient'],
+        values['amount'],
         values['signature'],
-    ) 
+    )
     response = {
         'message': f'transaction will be added to block {index}',
         'code': '0'
     }
     return jsonify(response), 201
 
+# HN
+# need to test
 @m_app.route('/blockchain/transact/rest', methods = ['POST'])
 def createNewTransaction_rest():
     values = request.form
     required = [
-        'sender', 
-        'recipient', 
+        'sender',
+        'recipient',
         'amount',
         'signature',
     ]
@@ -540,11 +562,11 @@ def createNewTransaction_rest():
 
     User.addCoins(values['recipient'], int(values['amount']))
     index = m_blockchain.createNewTransaction( #---- create now transaction
-        values['sender'], 
-        values['recipient'], 
-        values['amount'], 
+        values['sender'],
+        values['recipient'],
+        values['amount'],
         values['signature'],
-    ) 
+    )
     response = {
         'rcode': 'ok',
         'rmessage': f'transaction will be added to block {index}',
@@ -630,7 +652,7 @@ class User(m_db.Model):
         self.u_public_key = USER_NO_KEY
         self.u_coin = 0
         return
-    
+
     @classmethod
     def isValidUser(cls, name, password):
         data = User.query.filter_by(u_name = name, u_password = password).first()
@@ -668,7 +690,7 @@ class User(m_db.Model):
             m_db.session.commit()
             return True
         return False
-    
+
     @classmethod
     def registerNode(cls):
         data = User.query.filter_by(u_name = 'BLOCKCHAIN').first()
@@ -732,10 +754,10 @@ class User(m_db.Model):
     def test(cls):
         for user in User.query.all():
             print('%s, %s, %s, %s, %s, %s' % (
-                user.u_id, 
-                user.u_name, 
-                user.u_password, 
-                user.u_private_key, 
+                user.u_id,
+                user.u_name,
+                user.u_password,
+                user.u_private_key,
                 user.u_public_key,
                 user.u_coin,
             ))
