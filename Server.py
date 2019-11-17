@@ -280,6 +280,10 @@ def generateTransaction():
     sender_key = request.form['sender_key']
     recipient = request.form['recipient']
     amount = request.form['amount']
+    print(sender)
+    print(sender_key)
+    print(recipient)
+    print(amount)
     transaction = Transaction(sender, sender_key, recipient, amount)
     response = {
         'transaction': transaction.makeDict(),
