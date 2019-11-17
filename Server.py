@@ -239,6 +239,9 @@ def users():
     return render_template('./users.html', data = data, size = size)
 
 @m_app.route('/user/users/rest')
+# hn
+# need...
+# admin, general user seperate
 def users_rest():
     user_all = User.getUsers()
     users = []
@@ -256,6 +259,21 @@ def users_rest():
     #---- kong ---- data = json.loads(json.dumps(users))
     data = json.dumps(users)
     #----
+    response = {
+        'rcode': 'ok',
+        'rdata': data,
+    }
+    return jsonify(response), 200
+# hn
+# for user_info
+# @m_app.route('/unreg/rest', methods = ['POST'])
+# need to fix
+@m_app.route('/user/rest', method = ['POST'] )
+def user_rest():
+    name = request.form['username']
+    user_i = User.getUsercoin(name)
+    print(user_i)
+    data = json.dumps(user_i)
     response = {
         'rcode': 'ok',
         'rdata': data,
@@ -719,6 +737,15 @@ class User(m_db.Model):
         data = User.query.filter_by(u_name = name).first()
         if data is not None:
             return data.u_public_key
+        return False
+
+    # hn
+    # getUser() for userinfo
+    @classmethod
+    def getUsercoin(cls, name):
+        data = User.query.filter_by(u_name = name)
+        if data is not None:
+            return data.u_coin
         return False
 
     @classmethod
