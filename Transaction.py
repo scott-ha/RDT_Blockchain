@@ -23,7 +23,6 @@ class Transaction(object):
         return self.data[attr]
 
     def makeDict(self):
-        print('-------makeDict')
         return OrderedDict({
             'sender': self.sender,
             'recipient': self.recipient,
@@ -33,9 +32,18 @@ class Transaction(object):
     def signTransaction(self):
         privaye_key = RSA.importKey(binascii.unhexlify(self.sender_key))
         signer = PKCS1_v1_5.new(privaye_key)
-        # bug here... TypeError: a bytes-like object is required, not 'str'
+
         h = SHA.new(str(self.makeDict()).encode('utf8'))
+        print(type(h))
+        # <class 'Crypto.Hash.SHA.SHA1Hash'>
+        # print(h)
+        # <Crypto.Hash.SHA.SHA1Hash object at 0x10aaa4c40>
+        # bug in return
+        # bug here... TypeError: a bytes-like object is required, not 'str'
+        # print('----bug here----')
+        # a = signer.sign(h)
         return binascii.hexlify(signer.sign(h)).decode('ascii')
+        # return signer.hex(h)
 
 
 # EOF
