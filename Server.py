@@ -536,7 +536,7 @@ def createNewTransaction():
         values['signature'],
     )
     response = {
-        'message': f'transaction will be added to block {index}',
+        'message': 'transaction will be added to block {index}',
         'code': '0'
     }
     return jsonify(response), 201
