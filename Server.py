@@ -535,6 +535,7 @@ def createNewTransaction():
         values['amount'],
         values['signature'],
     )
+    # f?
     response = {
         'message': 'transaction will be added to block {index}',
         'code': '0'
@@ -572,9 +573,10 @@ def createNewTransaction_rest():
         values['amount'],
         values['signature'],
     )
+    # f?
     response = {
         'rcode': 'ok',
-        'rmessage': f'transaction will be added to block {index}',
+        'rmessage': 'transaction will be added to block {index}',
     }
     return jsonify(response), 201
 
