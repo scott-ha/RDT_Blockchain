@@ -22,6 +22,7 @@ class Transaction(object):
     def __getattr__(self, attr):
         return self.data[attr]
 
+    # not need sender key???
     def makeDict(self):
         return OrderedDict({
             'sender': self.sender,
@@ -29,21 +30,29 @@ class Transaction(object):
             'amount': self.amount
         })
 
+    # bug : this is developed in Python 3.5
+    # but now version is Python 3.8
+    # so in signer.sign(h), there's type error bug here...
     def signTransaction(self):
-        privaye_key = RSA.importKey(binascii.unhexlify(self.sender_key))
-        signer = PKCS1_v1_5.new(privaye_key)
-
-        h = SHA.new(str(self.makeDict()).encode('utf8'))
-        print(type(h))
+        private_key = RSA.importKey(binascii.unhexlify(self.sender_key))
+        signer = PKCS1_v1_5.new(private_key)
+        h_byte = str(self.makeDict()).encode()
+        h = SHA.new(h_byte)
+        # SHA.new() method
+        # h = str(h).encode()
+        # print(type(h))
         # <class 'Crypto.Hash.SHA.SHA1Hash'>
         # print(h)
         # <Crypto.Hash.SHA.SHA1Hash object at 0x10aaa4c40>
         # bug in return
         # bug here... TypeError: a bytes-like object is required, not 'str'
         # print('----bug here----')
+        # last issue...
+        # signer.sign working in 3.7.4
+        # not working 3.8.0
+        # solution????
         # a = signer.sign(h)
         return binascii.hexlify(signer.sign(h)).decode('ascii')
-        # return signer.hex(h)
 
 
 # EOF
