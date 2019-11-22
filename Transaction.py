@@ -47,11 +47,13 @@ class Transaction(object):
         # bug in return
         # bug here... TypeError: a bytes-like object is required, not 'str'
         # print('----bug here----')
+        
         # last issue...
         # signer.sign working in 3.7.4
         # not working 3.8.0
         # solution????
         # a = signer.sign(h)
+
         return binascii.hexlify(signer.sign(h)).decode('ascii')
 
 
