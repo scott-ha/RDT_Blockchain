@@ -592,6 +592,20 @@ def getFullChain():
     return jsonify(response), 200
 
 #
+#   HN need to modify
+#   for my transaction_list
+#   /blockchain/chains
+#
+# @m_app.route('/blockchain/chains')
+# def getFullChain():
+#     response = {
+#         'chains': m_blockchain.chains,
+#         'length': len(m_blockchain.chains),
+#     }
+#     return jsonify(response), 200
+
+
+#
 #   /blockchain/resolve
 #
 @m_app.route('/blockchain/resolve')
@@ -785,7 +799,7 @@ class User(m_db.Model):
 if __name__ == '__main__':
     from argparse import ArgumentParser
     parser = ArgumentParser()
-    parser.add_argument('-p', '--port', default = 40006, type = int, help = 'port to listen on')
+    parser.add_argument('-p', '--port', default = 5000, type = int, help = 'port to listen on')
     args = parser.parse_args()
     p = args.port
     m_db.create_all()
