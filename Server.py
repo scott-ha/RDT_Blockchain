@@ -604,6 +604,15 @@ def getFullChain():
 #     }
 #     return jsonify(response), 200
 
+# HN 1212
+@m_app.route('/blockchain/chains/users')
+def getFullChainz_User():
+    response = {
+        'chains': m_blockchain.chains,
+        'length': len(m_blockchain.chains),
+    }
+    return jsonify(response), 200
+
 
 #
 #   /blockchain/resolve

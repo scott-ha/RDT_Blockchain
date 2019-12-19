@@ -26,7 +26,7 @@ MINING_DIFFICULTY = 2
 MINING_BLOCK_SAVE_SIZE = 10000
 
 class Blockchain(object):
-    
+
     def __init__(self):
         self.transactions = []
         self.chains = []
@@ -106,7 +106,8 @@ class Blockchain(object):
         verifier = PKCS1_v1_5.new(public_key)
         h = SHA.new(str(transaction).encode('utf8'))
         return verifier.verify(h, binascii.unhexlify(signature))
-
+    # add users
+    # HN
     def createNewTransaction(self, sender, recipient, amount, signature):
         transaction = OrderedDict({
             'sender': sender,
