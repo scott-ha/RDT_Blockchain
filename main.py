@@ -11,11 +11,16 @@ from uuid import uuid4
 # reinstall crypto & pycrypto
 # install pycryptodome==3.4.3
 import binascii
-import Crypto
-import Crypto.Random
-from Crypto.Hash import SHA
-from Crypto.PublicKey import RSA
-from Crypto.Signature import PKCS1_v1_5
+import crypto
+# 20200226
+import sys
+sys.modules['Crypto'] = crypto
+import crypto.Random
+from crypto.Hash import SHA
+from crypto.PublicKey import RSA
+from crypto.Signature import PKCS1_v1_5
+
+
 
 import requests
 from flask import Flask, url_for, jsonify, request, render_template, make_response, redirect, session
@@ -29,7 +34,7 @@ m_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rdtone.db'
 m_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 m_db = SQLAlchemy(m_app)
 
-m_private_key = RSA.generate(1024, Crypto.Random.new().read)
+m_private_key = RSA.generate(1024, crypto.Random.new().read)
 m_public_key = m_private_key.publickey()
 m_key = binascii.hexlify(m_private_key.exportKey(format = 'DER')).decode('ascii')
 m_id = binascii.hexlify(m_public_key.exportKey(format = 'DER')).decode('ascii')
@@ -365,7 +370,7 @@ def getTransaction():
 #
 @m_app.route('/wallet/generate')
 def generateWallet():
-    random_num = Crypto.Random.new().read
+    random_num = crypto.Random.new().read
     private_key = RSA.generate(1024, random_num)
     public_key = private_key.publickey()
     response = {
@@ -376,7 +381,7 @@ def generateWallet():
 
 @m_app.route('/wallet/generate/rest')
 def generateWallet_rest():
-    random_num = Crypto.Random.new().read
+    random_num = crypto.Random.new().read
     private_key = RSA.generate(1024, random_num)
     public_key = private_key.publickey()
     response = {
@@ -808,7 +813,7 @@ class User(m_db.Model):
 if __name__ == '__main__':
     from argparse import ArgumentParser
     parser = ArgumentParser()
-    parser.add_argument('-p', '--port', default = 5000, type = int, help = 'port to listen on')
+    parser.add_argument('-p', '--port', default = 8080, type = int, help = 'port to listen on')
     args = parser.parse_args()
     p = args.port
     m_db.create_all()
