@@ -11,7 +11,9 @@ from urllib.parse import urlparse
 from uuid import uuid4
 
 import binascii
-import Crypto
+import crypto
+import sys
+sys.modules['Crypto'] = crypto
 import Crypto.Random
 from Crypto.Hash import SHA
 from Crypto.PublicKey import RSA

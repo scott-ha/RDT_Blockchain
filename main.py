@@ -10,31 +10,42 @@ from uuid import uuid4
 # solution
 # reinstall crypto & pycrypto
 # install pycryptodome==3.4.3
+# pycryptodome==3.4.3
+# pycrypto==2.6.1
+# crypto==1.4.1
 import binascii
+
+# # for GCP
+# import Crypto
+# # 20200226
+# # import sys
+# # sys.modules['Crypto'] = crypto
+
 import crypto
 # 20200226
 import sys
 sys.modules['Crypto'] = crypto
-import crypto.Random
-from crypto.Hash import SHA
-from crypto.PublicKey import RSA
-from crypto.Signature import PKCS1_v1_5
 
-
+import Crypto.Random
+from Crypto.Hash import SHA
+from Crypto.PublicKey import RSA
+from Crypto.Signature import PKCS1_v1_5
 
 import requests
 from flask import Flask, url_for, jsonify, request, render_template, make_response, redirect, session
 from flask_sqlalchemy import SQLAlchemy
+# from flask_session import Session
 
 from Blockchain import Blockchain, MINING_SENDER, MINING_REWARD
 from Transaction import Transaction
 
 m_app = Flask(__name__)
+# sess = Session()
 m_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rdtone.db'
 m_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 m_db = SQLAlchemy(m_app)
 
-m_private_key = RSA.generate(1024, crypto.Random.new().read)
+m_private_key = RSA.generate(1024, Crypto.Random.new().read)
 m_public_key = m_private_key.publickey()
 m_key = binascii.hexlify(m_private_key.exportKey(format = 'DER')).decode('ascii')
 m_id = binascii.hexlify(m_public_key.exportKey(format = 'DER')).decode('ascii')
@@ -370,7 +381,7 @@ def getTransaction():
 #
 @m_app.route('/wallet/generate')
 def generateWallet():
-    random_num = crypto.Random.new().read
+    random_num = Crypto.Random.new().read
     private_key = RSA.generate(1024, random_num)
     public_key = private_key.publickey()
     response = {
@@ -381,7 +392,7 @@ def generateWallet():
 
 @m_app.route('/wallet/generate/rest')
 def generateWallet_rest():
-    random_num = crypto.Random.new().read
+    random_num = Crypto.Random.new().read
     private_key = RSA.generate(1024, random_num)
     public_key = private_key.publickey()
     response = {
@@ -610,12 +621,13 @@ def getFullChain():
 #     return jsonify(response), 200
 
 # HN 1212
-@m_app.route('/blockchain/chains/users')
-def getFullChainz_User():
+@m_app.route('/blockchain/chains/rest', methods=['GET'])
+def getFullChains():
     response = {
         'chains': m_blockchain.chains,
         'length': len(m_blockchain.chains),
     }
+    response.header("Access-Control-Allow-Credentials", true)
     return jsonify(response), 200
 
 
@@ -640,7 +652,7 @@ def resolve():
 #
 #   /node/register
 #
-@m_app.route('/node/register', methods = ['POST'])
+@m_app.route('/node/register', methods = ['GET'])
 def registerNodes():
     values = request.get_json()
     nodes = values.get('nodes')
@@ -813,13 +825,21 @@ class User(m_db.Model):
 if __name__ == '__main__':
     from argparse import ArgumentParser
     parser = ArgumentParser()
-    parser.add_argument('-p', '--port', default = 8080, type = int, help = 'port to listen on')
+    parser.add_argument('-p', '--port', default = 8000, type = int, help = 'port to listen on')
     args = parser.parse_args()
     p = args.port
     m_db.create_all()
     m_app.secret_key = 'root'
+    m_app.config['SESSION_TYPE'] = 'filesystem'
+    # gcp setup
+    # RuntimeError: The session is unavailable because no secret key was set. Set the secret_key on the application to something unique and secret.
     User.registerNode()
     #User.test()
+
+    # m_app.config['SECRET_KEY'] = 'super secret key'
+    # m_app.config['SESSION_TYPE'] = 'filesystem'
+
+    # sess.init_app(m_app)
     m_app.run(host = '0.0.0.0', port = p)
 
 # EOF
